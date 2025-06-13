@@ -14,5 +14,6 @@ namespace Domain.Entities
         public bool IsEmailVerified { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? LastLogin { get; set; }
+        public required Address Address { get; set; }
     }
 }
