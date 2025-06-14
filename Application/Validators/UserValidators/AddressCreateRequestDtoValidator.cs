@@ -10,7 +10,6 @@ namespace Application.Validators.UserValidators
             RuleForTitle();
             RuleForStreet();
             RuleForCity();
-            RuleForState();
             RuleForPostalCode();
             RuleForCountry();
             RuleForDistrict();
@@ -31,11 +30,6 @@ namespace Application.Validators.UserValidators
             RuleFor(x => x.City)
                 .NotEmpty().WithMessage("Şehir alanı zorunludur.")
                 .MaximumLength(100).WithMessage("Şehir alanı en fazla 100 karakter olmalıdır.");
-
-        private void RuleForState() =>
-            RuleFor(x => x.State)
-                .NotEmpty().WithMessage("İl alanı zorunludur.")
-                .MaximumLength(100).WithMessage("İl alanı en fazla 100 karakter olmalıdır.");
 
         private void RuleForPostalCode() =>
             RuleFor(x => x.PostalCode)
