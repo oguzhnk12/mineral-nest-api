@@ -7,22 +7,22 @@ namespace Presentation.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class AuthController: ControllerBase
+    public class SignUpController : ControllerBase
     {
-        private readonly IAuthService _service;
+        private readonly ICreateUserService _service;
 
-        public AuthController(IAuthService service)
+        public SignUpController(ICreateUserService service)
         {
             _service = service;
         }
 
         [HttpPost()]
-        public async Task<IActionResult> Login([FromBody] UserLoginRequestDto request)
+        public async Task<IActionResult> SignUp([FromBody] UserCreateRequestDto request)
         {
-            var result = await _service.Login(request);
-            if (result != null)
+            var result = await _service.CreateUser(request);
+            if (result)
             {
-                return Ok(new ApiResponse<UserLoginResponseDto>(result, "Kullanıcı Başarıyla Oluşturuldu."));
+                return Ok(new ApiResponse<string?>(null, "Kullanıcı Başarıyla Oluşturuldu."));
             }
             return StatusCode(500, new ApiResponse<string?>(null, "Beklenmeyen Bir Hata Oluştu"));
         }
