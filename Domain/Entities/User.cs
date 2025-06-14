@@ -15,5 +15,6 @@ namespace Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? LastLogin { get; set; }
         public required Address Address { get; set; }
+        public ICollection<Cart>? Carts { get; set; }
     }
 }
