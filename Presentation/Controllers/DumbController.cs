@@ -6,7 +6,7 @@ using Presentation.Models;
 
 namespace Presentation.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "User")]
     [ApiController]
     [Route("[controller]")]
     public class DumbController : ControllerBase
