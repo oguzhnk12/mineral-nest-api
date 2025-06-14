@@ -1,22 +1,22 @@
 using Application;
+using Presentation.Middlewares;
 using System.Text.Json.Serialization;
 
+// Uygulama yapılandırma nesnesi oluşturulması.
 var builder = WebApplication.CreateBuilder(args);
 
-// Katman servislerini kapsayıcıya eklenmesi.
+// Katman servisleri DI konteynerine ekleniyor.
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
-// Controller'ların kapsayıcıya eklenmesi.
+// Controller'lar ve JSON enum desteği eklenmesi.
 builder.Services.AddControllers()
       .AddJsonOptions(opt =>
       {
           opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
       });
 
-builder.Services.AddHttpContextAccessor();
-
-// Swagger ve API Explorer'ın kapsayıcıya eklenmesi.
+// Swagger ve API Explorer servisleri eklenmesi.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -29,7 +29,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Bearer şeması kullanılarak JWT Yetkilendirme başlığı. \r\n\r\n Aşağıdaki metin kutusuna 'Bearer' [boşluk] ve ardından jetonunuzu girin.\r\n\r\nÖrnek: \"Bearer abc123\""
+        Description = "Bearer şeması ile JWT yetkilendirme başlığı. \r\n\r\n Aşağıdaki kutuya 'Bearer' [boşluk] ve ardından tokenınızı girin.\r\n\r\nÖrnek: \"Bearer abc123\""
     });
 
     c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
@@ -48,10 +48,13 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// HTTP Context erişimi için servis eklenmesi.
+builder.Services.AddHttpContextAccessor();
 
+// Uygulama instance'ı oluşturuluyor.
 var app = builder.Build();
-// Configure the HTTP request pipeline.
 
+// HTTP Pipeline yapılandırması.
 
 if (app.Environment.IsDevelopment())
 {
@@ -64,6 +67,9 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+// Global hata yönetimi için middleware.
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllers();
 

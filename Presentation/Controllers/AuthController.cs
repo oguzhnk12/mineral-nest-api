@@ -20,11 +20,7 @@ namespace Presentation.Controllers
         public async Task<IActionResult> Login([FromBody] UserLoginRequestDto request)
         {
             var result = await _service.Login(request);
-            if (result != null)
-            {
-                return Ok(new ApiResponse<UserLoginResponseDto>(result, "Kullanıcı Başarıyla Oluşturuldu."));
-            }
-            return StatusCode(500, new ApiResponse<string?>(null, "Beklenmeyen Bir Hata Oluştu"));
+            return Ok(new ApiResponse<UserLoginResponseDto>(result, "Kullanıcı Başarıyla Oluşturuldu."));
         }
     }
 }

@@ -34,14 +34,14 @@ namespace Infrastructure.Services
             var user = await _context.User.FirstOrDefaultAsync(u => u.Email == dto.Email);
             if (user == null)
             {
-                throw new NotFoundException("Invalid Username");
+                throw new UnauthorizedException("Geçersiz email adresi.");
             }
             
             var passwordHashResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
 
             if (passwordHashResult == PasswordVerificationResult.Failed)
             {
-                throw new NotFoundException("Invalid Password");
+                throw new UnauthorizedException("Şifre Yanlış.");
             }
 
             var token = GenerateToken(user.Email, user.Role);
@@ -61,7 +61,7 @@ namespace Infrastructure.Services
             new Claim(JwtRegisteredClaimNames.Sub, username),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.Role, role.ToString())
-        };
+            };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

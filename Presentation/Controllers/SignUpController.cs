@@ -20,11 +20,7 @@ namespace Presentation.Controllers
         public async Task<IActionResult> SignUp([FromBody] UserCreateRequestDto request)
         {
             var result = await _service.CreateUser(request);
-            if (result)
-            {
-                return Ok(new ApiResponse<string?>(null, "Kullanıcı Başarıyla Oluşturuldu."));
-            }
-            return StatusCode(500, new ApiResponse<string?>(null, "Beklenmeyen Bir Hata Oluştu"));
+            return Ok(new ApiResponse<object?>(null, "Kullanıcı Başarıyla Oluşturuldu."));
         }
     }
 }

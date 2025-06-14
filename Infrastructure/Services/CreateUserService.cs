@@ -31,8 +31,7 @@ namespace Infrastructure.Services
             var validationResult = validator.Validate(dto);
             if (!validationResult.IsValid)
             {
-                //throw new ValidationException(validationResult.Errors?.FirstOrDefault()?.ErrorMessage);
-                return false;
+                throw new BadRequestException(validationResult.Errors?.FirstOrDefault()?.ErrorMessage!);
             }
                 
 
