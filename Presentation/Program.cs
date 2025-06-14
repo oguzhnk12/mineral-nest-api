@@ -1,25 +1,61 @@
-using Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+using Application;
+using Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Katman servislerini kapsayıcıya eklenmesi.
+builder.Services.AddInfrastructureServices();
+builder.Services.AddApplicationServices();
+
+// Controller'ların kapsayıcıya eklenmesi.
+builder.Services.AddControllers()
+      .AddJsonOptions(opt =>
+      {
+          opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+      });
 
 
-// Add services to the container.
+builder.Services.AddHttpContextAccessor();
 
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Swagger ve API Explorer'ın kapsayıcıya eklenmesi.
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "MineralNest.Api", Version = "v1" });
 
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Kimlik Doğrulama",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Bearer şeması kullanılarak JWT Yetkilendirme başlığı. \r\n\r\n Aşağıdaki metin kutusuna 'Bearer' [boşluk] ve ardından jetonunuzu girin.\r\n\r\nÖrnek: \"Bearer abc123\""
+    });
 
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -27,6 +63,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

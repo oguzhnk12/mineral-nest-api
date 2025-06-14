@@ -1,6 +1,7 @@
 ﻿using Application.Features.UserFeatures;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enumerators;
 
 namespace Application.Mapping.MappingProfiles
 {
@@ -11,6 +12,5 @@ namespace Application.Mapping.MappingProfiles
             CreateMap<UserCreateRequestDto, User>()
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
         }
-
     }
 }

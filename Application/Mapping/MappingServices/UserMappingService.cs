@@ -4,7 +4,7 @@ using Domain.Entities;
 
 namespace Application.Mapping.MappingServices
 {
-    internal class UserMappingService
+    public class UserMappingService
     {
         private readonly IMapper _mapper;
 
