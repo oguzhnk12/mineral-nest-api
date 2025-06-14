@@ -1,12 +1,10 @@
 using Application;
-using Infrastructure;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Katman servislerini kapsayıcıya eklenmesi.
-builder.Services.AddInfrastructureServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
 // Controller'ların kapsayıcıya eklenmesi.
@@ -15,7 +13,6 @@ builder.Services.AddControllers()
       {
           opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
       });
-
 
 builder.Services.AddHttpContextAccessor();
 

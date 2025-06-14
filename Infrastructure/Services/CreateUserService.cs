@@ -1,8 +1,10 @@
 ﻿using Application.Features.UserFeatures;
 using Application.Interfaces;
 using Application.Mapping.MappingServices;
+using Application.Validators.UserValidators;
 using Domain.Entities;
 using Domain.Exceptions;
+using FluentValidation;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 
@@ -25,11 +27,20 @@ namespace Infrastructure.Services
 
         public async Task<bool> CreateUser(UserCreateRequestDto dto)
         {
+            var validator = new UserCreateRequestDtoValidator();
+            var validationResult = validator.Validate(dto);
+            if (!validationResult.IsValid)
+            {
+                //throw new ValidationException(validationResult.Errors?.FirstOrDefault()?.ErrorMessage);
+                return false;
+            }
+                
+
             var user = _mapper.MapToUser(dto);
 
             if (user == null)
             {
-                throw new BadRequestException("Geçersiz Kullanıcı Girişi Talebi");
+                throw new BadRequestException("Geçersiz Kullanıcı Oluşturma Talebi");
             }
 
             user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
